@@ -100,7 +100,6 @@ startTicking
   Starts the clock by setting an interval that will invoke a callback every second.
   The callback is composed using all of our functions. Every second the console is
   cleared, currentTime obtained, converted, civilianized, formatted, and displayed.
-  
 */
 
 const convertToCivilianTime = (clockTime) =>
