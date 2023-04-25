@@ -1,0 +1,171 @@
+let clock = document.getElementById("ticking_clock");
+// const compose = (...fns) => (x) => fns.reduceRight((acc, fn) => fn(acc), x);
+
+const compose =
+  (...fns) =>
+  (arg) =>
+    fns.reduce((composed, f) => f(composed), arg);
+// Log Clock Time every Second
+//setInterval(logClockTime, 1000);
+
+function logClockTime() {
+  // Get Time string as civilian time
+  var time = getClockTime();
+  // Clear the Console and log the time
+  console.clear();
+  console.log(time);
+  clock.innerHTML = `${time}`;
+}
+
+function getClockTime() {
+  // Get the Current Time
+  var date = new Date();
+  var time = "";
+  // Serialize clock time
+  var time = {
+    hours: date.getHours(),
+    minutes: date.getMinutes(),
+    seconds: date.getSeconds(),
+    ampm: "AM",
+  };
+  if (time.hours == 12) {
+    time.ampm = "PM";
+  } else if (time.hours > 12) {
+    time.ampm = "PM";
+    time.hours -= 12;
+  }
+  // Prepend a 0 on the hours to make double digits
+  if (time.hours < 10) {
+    time.hours = "0" + time.hours;
+  }
+  // prepend a 0 on the minutes to make double digits
+  if (time.minutes < 10) {
+    time.minutes = "0" + time.minutes;
+  }
+  // prepend a 0 on the seconds to make double digits
+  if (time.seconds < 10) {
+    time.seconds = "0" + time.seconds;
+  }
+  // Format the clock time as a string "hh:mm:ss tt"
+  return time.hours + ":" + time.minutes + ":" + time.seconds + " " + time.ampm;
+}
+
+// ====================================== follwing the delegations concept
+const fiveSeconds = () => 5000;
+const getCurrentTime = () => new Date();
+const clear = () => console.clear();
+
+const log = (message) => {
+  console.log(message);
+  clock.innerText = `\n ${message}`;
+};
+var date = new Date();
+/* 
+serializeClockTime
+    Takes a date object and returns a object for clock time that contains hours
+    minutes and seconds.
+civilianHours
+    Takes the clock time object and returns an object where hours are converted to
+    civilian time. For example: 1300 becomes 1 o’clock
+appendAMPM
+    Takes the clock time object and appends time of day, AM or PM, to that object.
+ */
+
+/* 
+These three functions are used to transform data without changing the original. They
+treat their arguments as immutable objects.
+ */
+
+const serializeClockTime = (data) => ({
+  hours: data.getHours(),
+  minutes: date.getMinutes(),
+  seconds: date.getSeconds(),
+});
+
+const civilianHours = (clockTime) => ({
+  ...clockTime,
+  hours: clockTime.hours > 12 ? clockTime.hours - 12 : clockTime.hours,
+});
+
+const appendAMPM = (clockTime) => ({
+  ...clockTime,
+  ampm: clockTime.hours < 12 ? "AM" : "PM",
+});
+
+/* 
+Next we'll need a few higher order functions:
+display
+    Takes a target function and returns a function that will send a time to the target.
+    In this example the target will be console.log.
+
+formatClock
+    Takes a template string and uses it to return clock time formatted based upon the
+    criteria from the string. In this example, the template is “hh:mm:ss tt”. From ther,
+    formatClock
+prependZero
+    Takes an object’s key as an argument and prepends a zero to the value stored
+    under that objects key. It takes in a k
+*/
+
+// const display = (target = (time) =>
+//   target(time)); /* target function used to handel time arg */
+
+const display = (target) => (time) => target(time);
+
+const formatClock = (format) => (time) =>
+  format
+    .replace("hh", time.hours)
+    .replace("mm", time.minutes)
+    .replace("ss", time.seconds)
+    .replace("tt", time.ampm);
+
+const ze = (key) => (clockTime) => ({
+  ...clockTime,
+  [key]: clockTime[key] < 10 ? "0" + clockTime[key] : clockTime[key],
+});
+
+const prependZero = (key) => (clockTime) => ({
+  ...clockTime,
+  [key]: clockTime[key] < 10 ? "0" + clockTime[key] : clockTime[key],
+});
+
+/* 
+convertToCivilianTime
+  A single function that will take clock time as an argument and transforms it into
+  civilian time by using both civilian hours.
+
+doubleDigits
+  A single function that will take civilian clock time and make sure the hours,
+  minutes, and seconds display double digits by prepending zeros where needed.
+
+startTicking
+  Starts the clock by setting an interval that will invoke a callback every second.
+  The callback is composed using all of our functions. Every second the console is
+  cleared, currentTime obtained, converted, civilianized, formatted, and displayed.
+*/
+
+const convertToCivilianTime = (clockTime) =>
+  compose(appendAMPM, civilianHours)(clockTime);
+
+const doubleDigits = (civilianTime) =>
+  compose(
+    prependZero("hours"),
+    prependZero("minutes"),
+    prependZero("seconds")
+  )(civilianTime);
+
+const startTicking = () =>
+  setInterval(
+    compose(
+      clear,
+      getCurrentTime,
+      serializeClockTime,
+      convertToCivilianTime,
+      doubleDigits,
+      formatClock("hh:mm:ss tt"),
+      display(log)
+    ),
+    fiveSeconds()
+  );
+
+startTicking();
