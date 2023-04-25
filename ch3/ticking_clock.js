@@ -90,11 +90,11 @@ const prependZero = (key) => (clockTime) => ({
 convertToCivilianTime
   A single function that will take clock time as an argument and transforms it into
   civilian time by using both civilian hours.
-
+  
 doubleDigits
   A single function that will take civilian clock time and make sure the hours,
   minutes, and seconds display double digits by prepending zeros where needed.
-  
+
 startTicking
   Starts the clock by setting an interval that will invoke a callback every second.
   The callback is composed using all of our functions. Every second the console is
