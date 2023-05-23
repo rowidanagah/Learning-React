@@ -32,6 +32,12 @@ const obj = {
 obj.log(obj.msg);
 obj.log(obj.message);
 
+log = (msg) => {
+  console.log(msg);
+  content.innerText += `\n  ${msg}`;
+};
+log("ITWorx, In JavaScript functions are variables using an arrow function");
+
 // Since functions are variables, we can add them to arrays:
 
 const arr = [
@@ -48,6 +54,24 @@ const arr = [
   },
   "They can be inserted into arrays",
 ];
+const numbers = [175, 50, 25, 10];
+let res_reduce = numbers.reduce((a, b) => {
+  console.log("--------", a, b, a - b);
+  a - b;
+}, 0);
+
+console.log(res_reduce, "reduce ");
+
+const ages = [21, 18, 42, 40, 64, 63, 34];
+
+let max_age = ages.reduce((max, age) => {
+  console.log(`${age} > ${max} = ${age > max}`);
+  return age > max ? age : max;
+}, 0);
+
+let max_age2 = ages.reduce((age, max) => (age > max ? age : max), 0);
+console.log("max age is ", max_age);
+console.log("max age is  ----------------", max_age2);
 
 arr[4](arr[5]);
 arr[1](arr[0]);
@@ -102,4 +126,4 @@ console.log(addColor("new title", list));
 
 const schools = ["Yorktown", "Washington & Lee", "Wakefield"];
 
-console.log(schools.join(", "))
+console.log(schools.join(", "));
