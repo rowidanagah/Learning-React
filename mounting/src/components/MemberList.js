@@ -6,7 +6,7 @@ const getFakeMembers = (count) => new Promise((resolve, rejects) => {
     const api = `https://api.randomuser.me/?nat=US&results=${count}`;
     const request = new XMLHttpRequest();
     request.open("GET", api);
-    request.onload = () => request.status == 200 ? resolve(JSON.parse(request.response).results) :  rejects(JSON.parse(request.response).results);
+    request.onload = () => request.status == 200 ? resolve(JSON.parse(request.response).results) :  rejects(Error(request.statusText));
     request.onerror = (err) => rejects(err);
     request.send(); 
   });
